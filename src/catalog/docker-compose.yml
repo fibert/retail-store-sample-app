@@ -32,7 +32,7 @@ services:
 
   # nosemgrep: yaml.docker-compose.security.writable-filesystem-service.writable-filesystem-service
   catalog-db:
-    image: mariadb:10.9
+    image: public.ecr.aws/docker/library/mariadb:10.9
     hostname: catalog-db
     restart: always
     security_opt:

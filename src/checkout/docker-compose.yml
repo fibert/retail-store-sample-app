@@ -32,7 +32,7 @@ services:
           path: package.json
 
   checkout-redis:
-    image: redis:6.0-alpine
+    image: public.ecr.aws/docker/library/redis:6.0-alpine
     hostname: checkout-redis
     restart: always
     ports:

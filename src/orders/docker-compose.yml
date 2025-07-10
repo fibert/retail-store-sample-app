@@ -47,7 +47,7 @@ services:
 
   # nosemgrep: yaml.docker-compose.security.writable-filesystem-service.writable-filesystem-service
   orders-db:
-    image: postgres:16.1
+    image: public.ecr.aws/docker/library/postgres:16.1
     hostname: orders-db
     restart: always
     security_opt:
@@ -67,7 +67,7 @@ services:
 
   # nosemgrep: yaml.docker-compose.security.writable-filesystem-service.writable-filesystem-service
   rabbitmq:
-    image: rabbitmq:3-management
+    image: public.ecr.aws/docker/library/rabbitmq:3-management
     hostname: rabbitmq
     restart: always
     security_opt:
