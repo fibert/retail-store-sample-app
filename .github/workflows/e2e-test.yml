@@ -105,7 +105,7 @@ jobs:
         env:
           IMAGE_TAG: e2e
         run: |
-          NODE_PORT=30000 helmfile apply -f src/app/helmfile.yaml --wait --skip-diff-on-install
+          NODE_PORT=30000 helmfile apply --debug -f src/app/helmfile.yaml --wait --skip-diff-on-install
 
           kubectl wait --for=condition=Ready pod -l app.kubernetes.io/owner=retail-store-sample --timeout 600s || exit_code=$?
 
