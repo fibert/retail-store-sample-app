@@ -3,10 +3,10 @@ name: E2E Test
 on:
   push:
     branches:
-      - main
+      - codebuild
   pull_request:
     branches:
-      - main
+      - codebuild
   workflow_dispatch:
 
 permissions: {}
@@ -14,7 +14,7 @@ permissions: {}
 jobs:
   docker:
     name: Docker E2E Tests
-    runs-on: ubuntu-latest
+    runs-on: codebuild-github-demo-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
       - uses: actions/checkout@v4
       - name: "Setup Env"
@@ -35,7 +35,7 @@ jobs:
 
   docker-multi:
     name: Docker E2E Tests (Multi)
-    runs-on: ubuntu-latest
+    runs-on: codebuild-github-demo-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
       - uses: actions/checkout@v4
       - name: "Setup Env"
@@ -68,7 +68,7 @@ jobs:
 
   kubernetes:
     name: Kubernetes E2E Tests
-    runs-on: ubuntu-latest
+    runs-on: codebuild-github-demo-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
       - uses: actions/checkout@v4
       - name: "Setup Env"
