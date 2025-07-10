@@ -1,1 +1,1 @@
-FROM cypress/included:13.17.0
+FROM public.ecr.aws/cypress-io/cypress/included:13.17.0
