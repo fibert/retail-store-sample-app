@@ -14,7 +14,9 @@ permissions: {}
 jobs:
   docker:
     name: Docker E2E Tests
-    runs-on: codebuild-github-demo-${{ github.run_id }}-${{ github.run_attempt }}
+    runs-on: 
+      - codebuild-github-demo-${{ github.run_id }}-${{ github.run_attempt }}
+        buildspec-override:true
     steps:
       - uses: actions/checkout@v4
       - name: "Setup Env"
