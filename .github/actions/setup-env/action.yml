@@ -7,15 +7,13 @@ runs:
     - name: Install devenv.sh
       shell: bash
       run: nix profile install nixpkgs#devenv
-
     - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4 # More information on this action can be found below in the 'AWS Credentials' section
-        with:
-          aws-region: aws-region-1
-    
+      uses: aws-actions/configure-aws-credentials@v4 # More information on this action can be found below in the 'AWS Credentials' section
+      with:
+        aws-region: aws-region-1
     - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
     #- name: Yarn install
     #  uses: nick-fields/retry@v3
     #  with:
