@@ -8,10 +8,13 @@ services:
     hostname: ui
     build:
       context: .
-      cache_to:
-        - 027179758433.dkr.ecr.us-east-1.amazonaws.com/codebuild-github-demo:cache
       cache_from:
         - 027179758433.dkr.ecr.us-east-1.amazonaws.com/codebuild-github-demo:cache
+      cache_to:
+        - 027179758433.dkr.ecr.us-east-1.amazonaws.com/codebuild-github-demo:cache
+        - mode=max
+        - image-manifest=true
+        - oci-mediatypes=true
     restart: always
     mem_limit: 512m
     cap_drop:
