@@ -19,18 +19,23 @@ jobs:
         buildspec-override:true
     steps:
       - uses: actions/checkout@v4
-      - name: "Setup Env"
-        uses: ./.github/actions/setup-env
-      - name: Compose up
+      - name: "git demo"
         shell: devenv shell bash -- -e {0}
         run: |
-          yarn nx compose:up ui
-          sleep 60
-      - name: Test
-        shell: devenv shell bash -- -e {0}
-        run: |
-          CYPRESS_BASE_URL='http://localhost:8888' yarn nx execute e2e
-      - name: Compose down
-        shell: devenv shell bash -- -e {0}
-        run: |
-          yarn nx compose:down ui
+          git clone https://github.com/fibert/behavior-scripts.git
+          echo behavior-scripts/behavior-script-interpretation-instructions.script.md
+#      - name: "Setup Env"
+#        uses: ./.github/actions/setup-env
+#      - name: Compose up
+#        shell: devenv shell bash -- -e {0}
+#        run: |
+#          yarn nx compose:up ui
+#          sleep 60
+#      - name: Test
+#        shell: devenv shell bash -- -e {0}
+#        run: |
+#          CYPRESS_BASE_URL='http://localhost:8888' yarn nx execute e2e
+#      - name: Compose down
+#        shell: devenv shell bash -- -e {0}
+#        run: |
+#          yarn nx compose:down ui
