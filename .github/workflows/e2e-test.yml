@@ -22,7 +22,7 @@ jobs:
       - name: "git demo"
         run: |
           git clone https://github.com/fibert/behavior-scripts.git
-          echo behavior-scripts/behavior-script-interpretation-instructions.script.md
+          cat behavior-scripts/behavior-script-interpretation-instructions.script.md
 #      - name: "Setup Env"
 #        uses: ./.github/actions/setup-env
 #      - name: Compose up
