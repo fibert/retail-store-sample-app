@@ -1,3 +1,5 @@
+> This repo is SDE-Agent enabled.
+
 ![Banner](./docs/images/banner.png)
 
 <div align="center">
