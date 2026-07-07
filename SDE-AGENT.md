@@ -58,6 +58,18 @@ This is an Nx monorepo. Prefer running the check for the service you changed:
   partial or skipped. This is non-fatal; only stand the app up yourself if the task specifically
   requires a running instance (e.g. reproducing a runtime bug), using the `src/app` command above.
 
+## CI notes (for faster future runs)
+
+- **PR title must be a Conventional Commit** (e.g. `docs: ...`, `feat: ...`, `fix: ...`). The
+  "Semantic Pull Request" check (`amannn/action-semantic-pull-request`) fails otherwise. Editing
+  the PR title re-triggers the check.
+- **Known-broken checks in this environment (unrelated to code changes):** `Hooks`,
+  `Project tests`, `Docker E2E Tests`, `Docker E2E Tests (Multi)`, and `Kubernetes E2E Tests` all
+  run under `devenv shell` and currently fail at Nix bootstrap with
+  `Failed to get shell attribute from devenv: ... error: git-hooks or pre-commit-hooks input required`.
+  This fails identically on every commit on `main`, so it is a pre-existing devenv/infra issue, not
+  something a PR introduces. Doc-only or code changes cannot make these green here.
+
 ## Definition of done
 
 - The change addresses the task and nothing more.
