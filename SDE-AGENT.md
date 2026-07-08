@@ -58,6 +58,19 @@ This is an Nx monorepo. Prefer running the check for the service you changed:
   partial or skipped. This is non-fatal; only stand the app up yourself if the task specifically
   requires a running instance (e.g. reproducing a runtime bug), using the `src/app` command above.
 
+## Known CI state (factual, for future runs)
+
+- **PR title must be a Conventional Commit** — the `PR` workflow runs
+  `amannn/action-semantic-pull-request`, which fails any PR whose title lacks a type prefix
+  (`feat:`, `fix:`, `docs:`, `chore:`, etc.). Editing the PR title re-triggers the check.
+- **`devenv`/Nix-based CI jobs are currently broken independent of any change** — the `E2E Test`,
+  `Project tests`, and `Hooks` jobs run inside `devenv shell` and fail during shell evaluation with
+  `Failed to get shell attribute from devenv` → `error: git-hooks or pre-commit-hooks input
+  required`. This happens before any project code runs and also fails on `main` (e.g. E2E Test).
+  It stems from the `rolling` nixpkgs/devenv inputs in `devenv.yaml`; it is **not** fixable by a
+  normal code/docs change and fixing it would require editing infra config (out of scope for most
+  tasks). Do not thrash trying to make these green.
+
 ## Definition of done
 
 - The change addresses the task and nothing more.
