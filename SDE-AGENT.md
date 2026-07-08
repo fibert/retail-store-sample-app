@@ -63,3 +63,13 @@ This is an Nx monorepo. Prefer running the check for the service you changed:
 - The change addresses the task and nothing more.
 - The relevant service builds; the relevant tests run (and you report what you ran + the outcome).
 - No secrets, credentials, or infra/deployment files changed unless explicitly requested.
+
+## Known CI state (for future runs)
+
+- **All CI jobs that use `./.github/actions/setup-env` (Hooks, Project tests, E2E) currently fail
+  in the `Setup Env` step** with `error: git-hooks or pre-commit-hooks input required`. This is a
+  pre-existing devenv/Nix breakage on `main` (the `git-hooks`/`pre-commit-hooks` flake input is
+  missing from `devenv.yaml`/`devenv.lock`); it is NOT caused by PR changes and reproduces on every
+  recent `main` commit. Do not attempt to fix it for a code/docs task — it requires editing
+  devenv/infra files that are out of scope. Only the **Semantic Pull Request** check (PR title must
+  be a valid Conventional Commit, e.g. `docs:`/`feat:`/`fix:`) can currently go green on a PR.
