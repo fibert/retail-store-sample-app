@@ -20,7 +20,7 @@ type Product struct {
 	ID          string `json:"id" gorm:"primaryKey"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
-	Price       int    `json:"price"`
+	Price       int    `json:"cost"`
 	Tags        []Tag  `json:"tags" gorm:"many2many:product_tags;"`
 }
 
