@@ -32,3 +32,12 @@ ciVerifyTimeoutSeconds: 300
 - The change addresses the task and nothing more.
 - The relevant service builds; the relevant tests run (and you report what you ran + the outcome).
 - No secrets, credentials, or infra/deployment files changed unless explicitly requested.
+
+## Notes for future runs (CI/tooling)
+
+- The Go catalog service pins `go 1.25.0` in `src/catalog/go.mod`. The default `go` on PATH may be
+  older; use `GOENV_VERSION=1.25.7 go test ./...` (goenv has 1.25.7 installed) from `src/catalog`.
+- CI workflows (`.github/workflows/pr.yaml`, `e2e-test.yml`) only trigger on `pull_request` events
+  targeting `main`. PRs whose base is another branch (e.g. `bug`) run no GitHub checks.
+- Full-stack compose: `DB_PASSWORD='...' docker compose --project-directory src/app up --build
+  --detach --wait`. The UI is published on host port 8888 (not 8080).
