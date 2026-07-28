@@ -43,6 +43,7 @@ jobs:
           role-to-assume: ${{ vars.CLAUDE_CODE_OIDC_ROLE_ARN }}
           aws-region: ${{ vars.AWS_REGION }}
 
+      - uses: actions/checkout@v4
       - name: Invoke Claude Code runtime to review the PR
         env:
           # RUNTIME_ARN: ${{ vars.CLAUDE_CODE_RUNTIME_ARN }}
