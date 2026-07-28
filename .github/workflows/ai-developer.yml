@@ -1,0 +1,65 @@
+# UC2 — automated PR review on the Claude Code AgentCore Runtime.
+#
+# Copy this into the TARGET repo as .github/workflows/pr-review.yml.
+# On a PR opened/synchronized, it assumes an IAM role via GitHub OIDC (no stored
+# AWS keys) and calls InvokeAgentRuntime — the runtime runs Claude Code headlessly
+# to review the PR. Claude Code posts its review back to GitHub itself using the
+# GitHub token already in Secrets Manager (gh-login inside the runtime), so this
+# workflow just fires the trigger.
+#
+# Repo setup (one-time):
+#   - Set repo variables (Settings → Secrets and variables → Actions → Variables):
+#       AWS_REGION                  e.g. us-east-1
+#       CLAUDE_CODE_RUNTIME_ARN     terraform output -raw claude_code_runtime_arn
+#       CLAUDE_CODE_OIDC_ROLE_ARN   terraform output -raw claude_code_github_oidc_role_arn
+#   - The role's trust policy must allow this repo (var.claude_code_github_repo in TF).
+#
+# NOTE on duration: synchronous InvokeAgentRuntime times out at 15 min. A full
+# review→fix→merge can exceed that, so the agent should run async (keep the microVM
+# alive via a HealthyBusy /ping, up to 8h) and post results to GitHub itself, rather
+# than this job blocking on the response. This template fires the invoke and captures
+# whatever streamed output is returned within the window.
+
+name: AI Software Developer (Claude Code on CodeBuild)
+on:
+  issues:
+    types: [opened, labeled]
+
+
+permissions:
+  id-token: write      # required for OIDC
+  contents: read
+  pull-requests: write # so the agent (or a follow-up step) can comment
+
+jobs:
+  develop:
+    # Checks if the specifically added label is 'bug' OR if the issue already contains it
+    if: github.event.label.name == 'AI' || contains(github.event.issue.labels.*.name, 'AI')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.CLAUDE_CODE_OIDC_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Invoke Claude Code runtime to review the PR
+        env:
+          # RUNTIME_ARN: ${{ vars.CLAUDE_CODE_RUNTIME_ARN }}
+          REGION: ${{ vars.AWS_REGION }}
+          REPO: ${{ github.repository }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: |
+          set -euo pipefail
+
+          PROMPT="Resolve issue #${ISSUE_NUMBER} in ${REPO}: \
+          Title: ${ISSUE_TITLE}. \
+          Body: ${ISSUE_Body}. \
+          Link your PR with the issue. Do not merge."
+
+          bash scripts/start-developer-agent.sh \
+            --repo "${REPO}" \
+            --region "${REGION}" \
+            --task "${PROMPT}"

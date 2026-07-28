@@ -1,0 +1,66 @@
+# UC2 — automated PR review on the Claude Code AgentCore Runtime.
+#
+# Copy this into the TARGET repo as .github/workflows/pr-review.yml.
+# On a PR opened/synchronized, it assumes an IAM role via GitHub OIDC (no stored
+# AWS keys) and calls InvokeAgentRuntime — the runtime runs Claude Code headlessly
+# to review the PR. Claude Code posts its review back to GitHub itself using the
+# GitHub token already in Secrets Manager (gh-login inside the runtime), so this
+# workflow just fires the trigger.
+#
+# Repo setup (one-time):
+#   - Set repo variables (Settings → Secrets and variables → Actions → Variables):
+#       AWS_REGION                  e.g. us-east-1
+#       CLAUDE_CODE_RUNTIME_ARN     terraform output -raw claude_code_runtime_arn
+#       CLAUDE_CODE_OIDC_ROLE_ARN   terraform output -raw claude_code_github_oidc_role_arn
+#   - The role's trust policy must allow this repo (var.claude_code_github_repo in TF).
+#
+# NOTE on duration: synchronous InvokeAgentRuntime times out at 15 min. A full
+# review→fix→merge can exceed that, so the agent should run async (keep the microVM
+# alive via a HealthyBusy /ping, up to 8h) and post results to GitHub itself, rather
+# than this job blocking on the response. This template fires the invoke and captures
+# whatever streamed output is returned within the window.
+
+name: PR Review (Claude Code on AgentCore)
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+    - main
+
+permissions:
+  id-token: write      # required for OIDC
+  contents: read
+  pull-requests: write # so the agent (or a follow-up step) can comment
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.CLAUDE_CODE_OIDC_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Invoke Claude Code runtime to review the PR
+        env:
+          RUNTIME_ARN: ${{ vars.CLAUDE_CODE_RUNTIME_ARN }}
+          REGION: ${{ vars.AWS_REGION }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          SESSION="pr-${REPO//\//-}-${PR}-${GITHUB_RUN_ID}"   # >=33 chars, stable per run
+          PROMPT="You are reviewing pull request #${PR} in ${REPO}. Run gh-login, then \
+          'gh pr checkout ${PR}' in a fresh clone, review the diff for bugs/security/style, \
+          and post your review as a PR comment with 'gh pr comment ${PR} --body-file -'. \
+          Fix trivial issues on the PR branch and push if appropriate. Do not merge."
+          PAYLOAD=$(python3 -c "import json,os;print(json.dumps({'prompt':os.environ['PROMPT']}))")
+
+          aws bedrock-agentcore invoke-agent-runtime \
+            --agent-runtime-arn "$RUNTIME_ARN" \
+            --runtime-session-id "$SESSION" \
+            --region "$REGION" \
+            --payload "$PAYLOAD" \
+            /dev/stdout
