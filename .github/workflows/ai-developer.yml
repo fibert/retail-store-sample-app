@@ -56,7 +56,7 @@ jobs:
 
           PROMPT="Resolve issue #${ISSUE_NUMBER} in ${REPO}: \
           Title: ${ISSUE_TITLE}. \
-          Body: ${ISSUE_Body}. \
+          Body: ${ISSUE_BODY}. \
           Link your PR with the issue. Do not merge."
 
           bash scripts/start-developer-agent.sh \
