@@ -20,7 +20,7 @@
 # than this job blocking on the response. This template fires the invoke and captures
 # whatever streamed output is returned within the window.
 
-name: PR Review (Claude Code on AgentCore)
+name: AI PR Review (Claude Code on AgentCore)
 
 on:
   pull_request:
@@ -51,8 +51,8 @@ jobs:
           PR: ${{ github.event.pull_request.number }}
         run: |
           set -euo pipefail
-          SESSION="pr-${REPO//\//-}-${PR}-${GITHUB_RUN_ID}"   # >=33 chars, stable per run
-          PROMPT="You are reviewing pull request #${PR} in ${REPO}. Run gh-login, then \
+          export SESSION="pr-${REPO//\//-}-${PR}-${GITHUB_RUN_ID}"   # >=33 chars, stable per run
+          export PROMPT="You are reviewing pull request #${PR} in ${REPO}. Run gh-login, then \
           'gh pr checkout ${PR}' in a fresh clone, review the diff for bugs/security/style, \
           and post your review as a PR comment with 'gh pr comment ${PR} --body-file -'. \
           Fix trivial issues on the PR branch and push if appropriate. Do not merge."
