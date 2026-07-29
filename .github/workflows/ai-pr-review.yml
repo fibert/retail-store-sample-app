@@ -49,6 +49,7 @@ jobs:
           REGION: ${{ vars.AWS_REGION }}
           REPO: ${{ github.repository }}
           PR: ${{ github.event.pull_request.number }}
+          AWS_MAX_ATTEMPTS: "1"
         run: |
           set -euo pipefail
           export SESSION="pr-${REPO//\//-}-${PR}-${GITHUB_RUN_ID}"   # >=33 chars, stable per run
@@ -62,6 +63,7 @@ jobs:
           aws bedrock-agentcore invoke-agent-runtime \
             --agent-runtime-arn "$RUNTIME_ARN" \
             --cli-binary-format raw-in-base64-out \
+            --cli-read-timeout 0 \
             --runtime-session-id "$SESSION" \
             --region "$REGION" \
             --payload "$PAYLOAD" \
