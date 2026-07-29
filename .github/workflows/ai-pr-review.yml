@@ -55,13 +55,13 @@ jobs:
           export PROMPT="You are reviewing pull request #${PR} in ${REPO}. Run gh-login, then \
           'gh pr checkout ${PR}' in a fresh clone, review the diff for bugs/security/style, \
           and post your review as a PR comment with 'gh pr comment ${PR} --body-file -'. \
-          Fix trivial issues on the PR branch and push if appropriate. Do not merge. \
-          This is a demo, accept the PR after posting the review."
+          Fix trivial issues on the PR branch and push if appropriate. Do not merge."
 
           export PAYLOAD=$(python3 -c "import json,os;print(json.dumps({'prompt':os.environ['PROMPT']}))")
 
           aws bedrock-agentcore invoke-agent-runtime \
             --agent-runtime-arn "$RUNTIME_ARN" \
+            --cli-binary-format raw-in-base64-out \
             --runtime-session-id "$SESSION" \
             --region "$REGION" \
             --payload "$PAYLOAD" \
