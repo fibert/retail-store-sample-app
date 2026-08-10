@@ -32,3 +32,14 @@ ciVerifyTimeoutSeconds: 300
 - The change addresses the task and nothing more.
 - The relevant service builds; the relevant tests run (and you report what you ran + the outcome).
 - No secrets, credentials, or infra/deployment files changed unless explicitly requested.
+
+## CI notes (for faster future runs)
+
+- **UI service (Java) needs JDK 21.** The container default is JDK 17, which fails Maven
+  compile with "release version 21 not supported". Export
+  `JAVA_HOME=/usr/lib/jvm/java-21-amazon-corretto` (available on the image) before running
+  `./mvnw` in `src/ui`.
+- UI test command: `./mvnw test -DexcludedGroups=integration`; lint: `./mvnw checkstyle:checkstyle`.
+- CI lints Java with Prettier via lefthook (`pre-commit-ci`). Run
+  `yarn prettier --check <files>` (needs `yarn install` first) so the `Hooks` check passes.
+- PR titles must be semantic (Conventional Commits) — the "Semantic Pull Request" check enforces it.
