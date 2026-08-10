@@ -95,6 +95,18 @@ public class TopologyService {
       });
   }
 
+  /**
+   * Probes the health of a backend service. Endpoints that are not configured
+   * (null or empty, e.g. when the UI runs against mocks) are treated as healthy
+   * since the UI does not depend on a remote instance in that case.
+   */
+  public Mono<Boolean> isServiceHealthy(String endpoint) {
+    if (endpoint == null || endpoint.isEmpty()) {
+      return Mono.just(true);
+    }
+    return checkHealth(endpoint);
+  }
+
   private Mono<Map<String, String>> fetchTopology(String endpoint) {
     return webClient
       .get()
