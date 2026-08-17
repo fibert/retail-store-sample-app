@@ -44,6 +44,7 @@ class HealthControllerTest {
     endpoints.setCarts("http://carts");
     endpoints.setCheckout("http://checkout");
     endpoints.setOrders("http://orders");
+    endpoints.setRecommendations("http://recommendations");
     return endpoints;
   }
 
@@ -59,6 +60,9 @@ class HealthControllerTest {
       Mono.just(true)
     );
     when(topologyService.checkHealth(eq("http://orders"))).thenReturn(
+      Mono.just(true)
+    );
+    when(topologyService.checkHealth(eq("http://recommendations"))).thenReturn(
       Mono.just(true)
     );
 
@@ -85,6 +89,9 @@ class HealthControllerTest {
       Mono.just(true)
     );
     when(topologyService.checkHealth(eq("http://orders"))).thenReturn(
+      Mono.just(true)
+    );
+    when(topologyService.checkHealth(eq("http://recommendations"))).thenReturn(
       Mono.just(true)
     );
 
