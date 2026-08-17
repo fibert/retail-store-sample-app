@@ -58,7 +58,8 @@ public class HealthController {
       checkService("catalog", endpoints.getCatalog()),
       checkService("carts", endpoints.getCarts()),
       checkService("checkout", endpoints.getCheckout()),
-      checkService("orders", endpoints.getOrders())
+      checkService("orders", endpoints.getOrders()),
+      checkService("recommendations", endpoints.getRecommendations())
     )
       .collectMap(ServiceHealth::name, ServiceHealth::healthy)
       .map(services -> {
