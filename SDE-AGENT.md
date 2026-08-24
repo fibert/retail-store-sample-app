@@ -32,3 +32,15 @@ ciVerifyTimeoutSeconds: 300
 - The change addresses the task and nothing more.
 - The relevant service builds; the relevant tests run (and you report what you ran + the outcome).
 - No secrets, credentials, or infra/deployment files changed unless explicitly requested.
+
+## CI notes (for future runs)
+
+- The `ui` service (Spring Boot) requires **Java 21** (per root `mise.toml`); the default `java`
+  on PATH may be 17. Build/test/run with `JAVA_HOME=/usr/lib/jvm/java-21-amazon-corretto`.
+- UI test command: `./mvnw test -DexcludedGroups=integration` (from `src/ui`). Lint: `./mvnw checkstyle:checkstyle`.
+- CI's `hooks` job runs `prettier --check` on staged `.java`/`.xml`/etc. files; run
+  `yarn prettier --write <files>` (needs `yarn install` first) before committing to pass it.
+- PR titles must be **semantic** (`amannn/action-semantic-pull-request`), e.g. `feat(...)`, `fix(...)`.
+- The `AI PR Review (Claude Code on AgentCore)` check invokes an AWS Bedrock AgentCore runtime and
+  is prone to environmental failures (`Connection was closed before we received a valid response`);
+  this is infra-side and not fixable from the PR branch. The required checks are `PR` and `E2E Test`.
