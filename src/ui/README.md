@@ -45,6 +45,12 @@ Several "utility" endpoints are provided with useful functionality for various s
 | `GET`  | `/utility/store/{hash}`        | Return the payload from the file system previously written                  |
 | `GET`  | `/utility/stress/{iterations}` | Stress the CPU with the number of iterations increasing the CPU consumption |
 
+A deep health check is also provided:
+
+| Method | Name      | Description                                                                                                     |
+| ------ | --------- | --------------------------------------------------------------------------------------------------------------- |
+| `GET`  | `/health` | Pings all configured backend components and returns `200` only if every one of them is healthy, otherwise `503` |
+
 ## Running
 
 There are two main options for running the service:

@@ -32,3 +32,15 @@ ciVerifyTimeoutSeconds: 300
 - The change addresses the task and nothing more.
 - The relevant service builds; the relevant tests run (and you report what you ran + the outcome).
 - No secrets, credentials, or infra/deployment files changed unless explicitly requested.
+
+## CI notes (for future runs)
+
+- **PR titles must be Conventional Commits** — the `semanticpr` check runs
+  `amannn/action-semantic-pull-request` (e.g. `feat(ui): ...`, `fix(catalog): ...`).
+- **UI service (`src/ui`) is Java 21 + Maven.** Local JDK 21 lives at
+  `/usr/lib/jvm/java-21-amazon-corretto` (default `java` on PATH is 17 — set `JAVA_HOME`).
+  Maven needs network on first run to fetch deps (offline `-o` fails on a fresh checkout).
+  - Unit tests: `./mvnw test -DexcludedGroups=integration`
+  - Lint (checkstyle, config `src/misc/style/java/checkstyle.xml`): `./mvnw checkstyle:checkstyle`
+- **Prettier lint (CI "Hooks" job)** covers `*.java`/`*.md`/etc. via `yarn prettier --check`.
+  Run `yarn install` then `yarn prettier --write <files>` before committing (prettier-plugin-java).
