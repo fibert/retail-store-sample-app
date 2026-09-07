@@ -32,3 +32,13 @@ ciVerifyTimeoutSeconds: 300
 - The change addresses the task and nothing more.
 - The relevant service builds; the relevant tests run (and you report what you ran + the outcome).
 - No secrets, credentials, or infra/deployment files changed unless explicitly requested.
+
+## CI notes (facts that help future runs pass CI faster)
+
+- **UI (`src/ui`) is Java 21** (`.mise.toml`). The container's default `java` is 17; set
+  `JAVA_HOME=/usr/lib/jvm/java-21-amazon-corretto` (and run that jar's `bin/java` directly)
+  or Maven fails with "release version 21 not supported" / `UnsupportedClassVersionError`.
+- UI unit tests: `cd src/ui && ./mvnw test -DexcludedGroups=integration`. Lint: `./mvnw checkstyle:checkstyle`.
+- Java/XML/JSON/YAML are formatted with Prettier (run `yarn install` first, then
+  `yarn prettier --check <files>`); the `Hooks` CI job runs `lefthook pre-commit-ci` = prettier --check.
+- PR titles must be Conventional Commits (semantic-pull-request check), e.g. `feat(ui): ...`.
