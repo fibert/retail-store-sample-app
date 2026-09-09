@@ -32,3 +32,18 @@ ciVerifyTimeoutSeconds: 300
 - The change addresses the task and nothing more.
 - The relevant service builds; the relevant tests run (and you report what you ran + the outcome).
 - No secrets, credentials, or infra/deployment files changed unless explicitly requested.
+
+## Known CI facts (for faster runs)
+
+- **UI service (`src/ui`) needs Java 21** — the container image on `PATH` may be Java 17, which
+  fails to run the built jar (`UnsupportedClassVersionError`). Build/run with
+  `/usr/lib/jvm/java-21-amazon-corretto` (setting `JAVA_HOME` alone does not change which `java`
+  runs). The Maven wrapper `./mvnw` lives in each service dir (e.g. `src/ui/mvnw`).
+- **UI local checks** (mirror CI): `./mvnw test -DexcludedGroups=integration`,
+  `./mvnw checkstyle:checkstyle`, and `yarn prettier --check <files>` (`.java`/`.xml`/`.yml` etc.).
+  Run `yarn install --immutable` first to enable prettier.
+- **PR titles must be semantic** (Conventional Commits, e.g. `feat(monitoring): ...`) — enforced by
+  the "Semantic Pull Request" check.
+- Backend health paths differ: catalog & checkout expose `/health`; cart & orders expose
+  `/actuator/health`. The UI's `TopologyService` already probes `/topology` → `/health` →
+  `/actuator/health` and is the canonical way to reach backends for health checks.
