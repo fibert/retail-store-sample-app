@@ -103,7 +103,7 @@ public class TopologyService {
       .bodyToMono(new ParameterizedTypeReference<Map<String, String>>() {});
   }
 
-  private Mono<Boolean> checkHealth(String endpoint) {
+  public Mono<Boolean> checkHealth(String endpoint) {
     return probeHealth(joinPath(endpoint, "health")).flatMap(ok ->
       ok ? Mono.just(true) : probeHealth(joinPath(endpoint, "actuator/health"))
     );

@@ -32,3 +32,12 @@ ciVerifyTimeoutSeconds: 300
 - The change addresses the task and nothing more.
 - The relevant service builds; the relevant tests run (and you report what you ran + the outcome).
 - No secrets, credentials, or infra/deployment files changed unless explicitly requested.
+
+## Notes for future runs (CI tips)
+
+- The `ui` service requires **Java 21** (system default may be 17). Use
+  `JAVA_HOME=/usr/lib/jvm/java-21-amazon-corretto` when building/testing locally.
+- UI unit tests: `cd src/ui && ./mvnw test -DexcludedGroups=integration`. Lint: `./mvnw checkstyle:checkstyle`.
+- The `hooks` CI job runs `yarn prettier --check` on changed `.java`/`.md`/`.xml`/`.yaml` files.
+  Run `yarn prettier --write <files>` (from repo root) before committing or it will fail.
+- PR titles must be semantic (Conventional Commits, e.g. `feat(ui): ...`) — enforced by the PR workflow.

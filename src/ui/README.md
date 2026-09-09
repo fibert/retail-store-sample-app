@@ -33,6 +33,12 @@ The following environment variables are available for configuring the service:
 
 ## Endpoints
 
+A deep health check is provided which pings the configured backend components and returns `200` only if all of them are healthy, otherwise `503`:
+
+| Method | Name      | Description                                                                                  |
+| ------ | --------- | -------------------------------------------------------------------------------------------- |
+| `GET`  | `/health` | Deep health check that aggregates the health of the catalog, carts, orders and checkout APIs |
+
 Several "utility" endpoints are provided with useful functionality for various scenarios:
 
 | Method | Name                           | Description                                                                 |
