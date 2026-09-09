@@ -54,7 +54,7 @@ public class HealthController {
 
   @GetMapping
   public Mono<ResponseEntity<Map<String, String>>> health() {
-    return Flux.merge(
+    return Flux.mergeSequential(
       probe("catalog", endpoints.getCatalog()),
       probe("carts", endpoints.getCarts()),
       probe("checkout", endpoints.getCheckout()),
