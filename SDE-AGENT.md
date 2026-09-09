@@ -32,3 +32,16 @@ ciVerifyTimeoutSeconds: 300
 - The change addresses the task and nothing more.
 - The relevant service builds; the relevant tests run (and you report what you ran + the outcome).
 - No secrets, credentials, or infra/deployment files changed unless explicitly requested.
+
+## CI notes for future runs
+
+- PR titles must be semantic (Conventional Commits) — a `Semantic Pull Request` check enforces it
+  (e.g. `feat(...)`, `fix(...)`).
+- CI `Hooks` job runs Prettier in `--check` mode over changed files. Java is formatted with
+  `prettier-plugin-java`; run `yarn install` then `yarn prettier --write <files>` before committing
+  (the `pre-commit` hook also auto-formats).
+- The UI service (`src/ui`) requires **Java 21** to build; locally use
+  `JAVA_HOME=/usr/lib/jvm/java-21-amazon-corretto`. Unit tests:
+  `./mvnw test -DexcludedGroups=integration`; lint: `./mvnw checkstyle:checkstyle`.
+- `Docker E2E Tests` runs Cypress against `yarn nx compose:up ui` (UI-only compose on port 8888)
+  and takes ~5 min.
