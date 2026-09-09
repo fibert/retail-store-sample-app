@@ -95,6 +95,33 @@ public class TopologyService {
       });
   }
 
+  /**
+   * Deep health probe for a single backend component. Unlike {@link
+   * #getTopologyForService}, this ignores the topology endpoint and directly
+   * pings the component's health endpoint. Returns {@link TopologyStatus#NONE}
+   * when the component is not configured, {@link TopologyStatus#HEALTHY} when a
+   * health probe succeeds and {@link TopologyStatus#UNHEALTHY} otherwise.
+   */
+  public Mono<TopologyStatus> checkComponentHealth(
+    String serviceName,
+    String endpoint
+  ) {
+    if (endpoint == null || endpoint.isEmpty()) {
+      return Mono.just(TopologyStatus.NONE);
+    }
+
+    return checkHealth(endpoint).map(healthy -> {
+      if (!healthy) {
+        log.warn(
+          "Deep health check failed for service {} at {}",
+          serviceName,
+          endpoint
+        );
+      }
+      return healthy ? TopologyStatus.HEALTHY : TopologyStatus.UNHEALTHY;
+    });
+  }
+
   private Mono<Map<String, String>> fetchTopology(String endpoint) {
     return webClient
       .get()
