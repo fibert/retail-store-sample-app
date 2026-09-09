@@ -6,8 +6,8 @@ circuit-breaker limits below.
 
 ## Circuit breakers (parsed; a repo may only tighten below the system caps)
 
-maxTurns: 60
-maxBudgetUsd: 20
+maxTurns: 120
+maxBudgetUsd: 50
 ciVerifyTimeoutSeconds: 300
 
 ## Instructions
